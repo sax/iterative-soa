@@ -1,0 +1,260 @@
+# An Iterative Approach to Service Oriented Architecture
+
+---
+
+# Why should you listen to me?
+
+* Application developer background
+* Recent focus in operations
+* Such acronyms, so buzzword
+  * TDD, BDD, Agile, DevOps, SOA
+* Been able to break a surprising amount of things in a short amount of time
+* Work at Wanelo
+
+---
+
+# Wanelo, why?
+
+* Social network for shopping
+  * check it out!
+* Databases with billions of records
+* Iterated from one large codebase with everything to one central
+  codebase with multiple supporting services
+* Actually doing a good job of putting all the above buzzwords into practice
+  * Very small team able to accomplish much more much faster than significantly
+    larger companies I've worked at
+  * Have done much larger things than we've done elsewhere without any real
+    problems
+* Done things successfully in Ruby that other companies say Ruby can't
+  handle
+* --> http://www.youtube.com/watch?v=LAP1zaXUvAE
+
+---
+
+# But success is not why we're here
+
+* We're not here for the happy ending
+* What went wrong?
+* What keeps you up (or wakes you up) at night?
+* What should I do differently?
+
+---
+
+# Rewind to another company
+
+* Won't name names, but a friend and former co-worker recently
+  named it "the Anti-Pattern Goldmine"
+* One giant, completely tangled Rails codebase
+  * vendored Rails with custom non-forward-compatible changes
+* Code terminally tangled
+* Five-six teams all cramming features in as fast as they could code
+  * Code branches diverging for months at a time in complete isolation
+  * People working on completely unrelated features were almost guaranteed to
+    generate code conflicts
+* Releases a nightmare
+  * Monthly when I started
+  * Eventually weekly
+  * Change list for each deploy had to be distributed to and explained to executives
+  * Deploys often took multiple hours
+  * Annual code-freeze where deployments stopped for three months
+
+---
+
+# Even worse...
+
+* Rough estimates would turn into deadlines with specific dates
+* Massive shortcuts were the only way to meet deadlines
+* As soon as a project launched, new projects and deadlines would split up a team
+* Crazy deadlines and tangled code means code only every gets worse
+* Estimates based on worse-case timelines are never worse-case enough, deadlines
+  always create more technical debt
+
+---
+
+# When work is a nightmare...
+
+* When writing code is not fun, you're DOING IT WRONG
+* Team (especially me) latches onto SOA as THE SOLUTION TO ALL OUR PROBLEMS
+* I decide that DevOps is the SOLUTION TO OUR PROCESS
+
+---
+
+# Role change
+
+* I move into the operations team, which was renamed to pretend that it wasn't an
+  operations team
+* I start working with systems automations software as well as working much
+  moar deeply in the OS
+* "DevOps" seems to mean that other team over there who deploy my code
+* SOA is what everyone knows we need to do, but can't get permission from product managers
+
+---
+
+# SOA or nothing
+
+* If you can't succeed...
+  * take a firm stance
+  * deep a breath
+  * cry like a baby
+  * ALSO: if there's one thing I've learned from my cats, it's how to throw things on the floor
+
+---
+
+# But really...
+
+* At a certain point, we said no more
+* New major feature involving login code would be done as a separate application, or not at all
+* Meanwhile... internal product sourcing implemented as a separate application
+  built around a data service
+  * fix data inconsistency between Enterprise software package and home-grown
+    Rails app
+* "This will be hard and we'll screw up, but we have no other option"
+
+---
+
+# Okay, so what is SOA again?
+
+* Site is composed of multiple applications
+* Everything else is arguable
+* Sometimes helpful to distringuish
+  * internal vs external
+  * user interface vs data service
+
+---
+
+# For the purposes of this talk
+
+* application = has a user interface that a human interacts with
+* data service = no UI, only an API that other applications or services communicate with
+* internal = only accessible to people/programs within the company
+* external = consumed or interacted with by users/programs outside of the company
+
+---
+
+# Okay, so why SOA again?
+
+* Scale organization
+  * Each team can manage its own codebase
+  * Each team can deploy their own changes
+  * Outsource portions of functionality without granting keys to the kingdom
+* Scale tests
+  * Small test suite runs faster
+* Scale codebase
+  * Performance tuned tightly to workload
+  * Hide complexity behind clean interfaces
+  * Use language/framework best suited to task
+  * Isolation between service layers CAN enforce code isolation
+
+---
+
+# Okay, so back to our protagonists
+
+* data service developed in isolation for 8 months
+* required complex state transitions and interactions between multiple applications
+* launch was complicated and caused data problems, but since it was internal
+  everything could be fixed
+* internal applications ambiguously successful
+  * they depend on the data service, so yay?
+  * data service doesn't entirely solve the core data inconsistencies
+
+---
+
+# What's this 8 month data service thing?
+
+* 6 engineers for 8 months
+* Engineering: Yay we didn't mess up the site! Success!!!!
+* Product: I don't understand, but we didn't have those resources for 8 months. FAIL!!!!!
+
+---
+
+# But what about that new external thing?
+
+* 2-4 engineers for 3 months + the "DevOps" team
+* staging servers available within 2 weeks
+* discovered in month 2 that no-one had ever tried deploying the app
+* took 2 months to completely refactor our Chef code to configure things "perfectly"
+  * engineers on app team did not want to learn Chef, nor Capistrano
+* spent an extra 2 weeks just to try to break things, add better error handling
+
+---
+
+# But then it deployed to users!
+
+* Worked exactly as intended
+* Major new functionality around login was successful
+* So well engineered, we could restart databases in the middle of the day
+  * handful of users **might** see an error message with a link to retry
+* Engineering: Massive success!!!!1!!1!
+* Product: I don't understand, but this took 4 engineers 3 months? FAIL!!!!!!
+
+---
+
+# Was this successful, or not?
+
+* At the time I insisted that the projects were a success
+* Now I think they were not successful
+  * How could we possibly justify silo-ing 8 engineers for months or years at a time
+    without any indication of whether a project will be successful or not?
+  * How do we even measure success?
+* In retrospect, I don't think we could have done things any differently
+
+---
+
+# Let's go deeper
+
+* Why did we need to do SOA in the first place?
+* Engineering did not trust that we could continue developing the site without
+  writing new code as separate services
+* Engineering did not trust that if we took shortcuts we would be able to fix
+  our mistakes later
+* Our "Agile" company was planning 12 months in advance with improbable deadlines attached
+* Because deployments were painful, product and engineering delayed deployment for
+  as long as possible
+
+---
+
+# And even deeper?
+
+* Product did not trust engineering to deliver on promises
+* Very rough estimations were turned into fixed dates to try to force accountability
+  from engineering
+* Product was accountable for features being delivered, not the quality of the features
+  nor the engagement of users on the site
+* How demoralizing is it to work harder than you've ever worked in your life to
+  deploy code on a specific arbitrarily-chosen date, cutting every corner you
+  can find, and then not see any change in user engagement?
+
+---
+
+# TRUST
+
+* How can you build a world changing product if no one building the product trusts
+  one another?
+* How can you trust your estimates if you can't trust that you can write correct
+  code quickly?
+
+---
+
+# So what did we learn?
+
+* Fuck it, next company we're doing all services all the time, starting from scratch
+  * NO!
+  * Thankfully I have a boss that is both reasonable and practical, and is extremely
+    convincing in arguments
+  * Split out services when it is painful, or just before
+
+---
+
+# What did we really learn?
+
+* Real Agile is not a constant sprint until everyone passes out
+* Agile is about being thoughtful with each iteration, and using data to guide
+  your next iteration
+* Red-Green-Refactor is not complete until you refactor
+* Service Oriented Architecture will not solve deeper organizational problems
+* SOA is a way of describing various tools at our disposal, which we can use to
+  solve our pain points
+
+---
+
+# stuff
