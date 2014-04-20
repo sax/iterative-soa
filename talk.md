@@ -7,7 +7,7 @@
 * Application developer background
 * Recent focus in operations
 * Such acronyms, so buzzword
-  * TDD, BDD, Agile, DevOps, SOA
+  * TDD, BDD, Agile, DevOps, SOA, Cloud, IaaS
 * Been able to break a surprising amount of things in a short amount of time
 * Work at Wanelo
 
@@ -47,16 +47,19 @@
 * One giant, completely tangled Rails codebase
   * vendored Rails with custom non-forward-compatible changes
 * Code terminally tangled
-* Five-six teams all cramming features in as fast as they could code
+* Five teams all cramming features in as fast as they could write code
   * Code branches diverging for months at a time in complete isolation
   * People working on completely unrelated features were almost guaranteed to
     generate code conflicts
-* Releases a nightmare
-  * Monthly when I started
-  * Eventually weekly
-  * Change list for each deploy had to be distributed to and explained to executives
-  * Deploys often took multiple hours
-  * Annual code-freeze where deployments stopped for three months
+
+---
+
+# Releases a nightmare
+* Monthly when I started
+* Eventually weekly
+* Change list for each deploy had to be distributed to and explained to executives
+* Deploys often took multiple hours
+* Annual code-freeze where deployments stopped for three months
 
 ---
 
@@ -228,6 +231,8 @@
 
 # TRUST
 
+---
+
 * How can you build a world changing product if no one building the product trusts
   one another?
 * How can you trust your estimates if you can't trust that you can write correct
@@ -257,4 +262,78 @@
 
 ---
 
-# stuff
+# Major releases are never the answer
+
+* If someone comes to you with a project plan that involves 3 months of
+  writing code without a single release, you....
+  * Nod respectfully
+  * Laugh
+  * Slap them in the face
+
+  * You say NO
+
+---
+
+# Iteration
+
+* Many small refactorings to allow service extraction
+* Feature flags
+* Deploy early and often
+* Do each step is prioritized and completed when necessary
+
+---
+
+# When is right to split out or start a new service?
+
+---
+
+# 1) Performance
+
+* Code runs too slowly
+* Resource contention
+  * Databases
+  * Locks
+
+---
+
+# 2) Operational complexity requires code complexity
+
+* For example: sharding PostgreSQL tables in Ruby
+
+---
+
+# 3) New code is completely unrelated to old code
+
+* By unrelated, I mean completely unrelated
+
+---
+
+# With the caveat...
+
+* May go into old codebase short-term for practicality
+  * Deploy today is better than deploy next week
+  * Requires TRUST that you'll be given the time to fix this when
+    it becomes a problem
+
+---
+
+# So... performance
+
+* Site getting slower
+* Databases becoming I/O bound on disk
+* User growth is crazy
+
+---
+
+# Linear regressions
+
+* One database table is growing completely differently from others
+* Reads from one table kill caches for other tables
+* We're in the **cloud**, so have limitations on max size of a single server
+
+---
+
+# Linear regressions break down
+
+* Exponential growth means the line is different today vs tomorrow
+* Problems **always** crop up before your regression leads you to predict
