@@ -2,14 +2,34 @@
 
 ---
 
+[diagram of one big app]
+
+---
+
+[diagram of many apps talking to each other]
+
+---
+
+* Isolate data
+* Isolate interface
+* Extract database adapter into client library
+* Launch service layer
+* Switch client to use service adapter
+
+---
+
 # Why should you listen to me?
 
+[twitter avatar]
+
 * Application developer background
+  * ~6 years with Rails
 * Recent focus in operations
 * Such acronyms, so buzzword
-  * TDD, BDD, Agile, DevOps, SOA, Cloud, IaaS
-* Been able to break a surprising amount of things in a short amount of time
+  * TDD, Agile, DevOps, SOA, Cloud, IaaS
 * Work at Wanelo
+* Broken a surprising amount of things in a short amount of time
+* My apartment smells of rich mohagany
 
 ---
 
@@ -20,14 +40,17 @@
 * Databases with billions of records
 * Iterated from one large codebase with everything to one central
   codebase with multiple supporting services
+
+---
+
+# Wanelo, why?
+
 * Actually doing a good job of putting all the above buzzwords into practice
-  * Very small team able to accomplish much more much faster than significantly
-    larger companies I've worked at
-  * Have done much larger things than we've done elsewhere without any real
-    problems
-* Done things successfully in Ruby that other companies say Ruby can't
-  handle
-* --> http://www.youtube.com/watch?v=LAP1zaXUvAE
+  * Very small team able
+  * Accomplish much more, much faster than larger companies I've worked at
+* Have done much larger things than we've done elsewhere without any real problems
+* Done things successfully in Ruby that some people say Ruby can't handle
+* DevOps --> http://www.youtube.com/watch?v=LAP1zaXUvAE
 
 ---
 
@@ -44,7 +67,7 @@
 
 * Won't name names, but a friend and former co-worker recently
   named it "the Anti-Pattern Goldmine"
-* One giant, completely tangled Rails codebase
+* One giant, completely tangled Rails 2 codebase
   * vendored Rails with custom non-forward-compatible changes
 * Code terminally tangled
 * Five teams all cramming features in as fast as they could write code
@@ -55,6 +78,7 @@
 ---
 
 # Releases a nightmare
+
 * Monthly when I started
 * Eventually weekly
 * Change list for each deploy had to be distributed to and explained to executives
@@ -88,7 +112,7 @@
   operations team
 * I start working with systems automations software as well as working much
   moar deeply in the OS
-* "DevOps" seems to mean that other team over there who deploy my code
+* "DevOps" seems to mean that team over there who deploy my code
 * SOA is what everyone knows we need to do, but can't get permission from product managers
 
 ---
@@ -100,6 +124,7 @@
   * deep a breath
   * cry like a baby
   * ALSO: if there's one thing I've learned from my cats, it's how to throw things on the floor
+    [animated gif of cat pushing things off a ledge]
 
 ---
 
@@ -279,7 +304,7 @@
 * Many small refactorings to allow service extraction
 * Feature flags
 * Deploy early and often
-* Do each step is prioritized and completed when necessary
+* Each step prioritized and completed when necessary
 
 ---
 
@@ -337,3 +362,103 @@
 
 * Exponential growth means the line is different today vs tomorrow
 * Problems **always** crop up before your regression leads you to predict
+
+---
+
+# Decisions
+
+* Without change, the site will stop working
+* How to solve the problem without entire engineering dept grinding to a halt
+  * 10 engineers at the time
+
+---
+
+# Step 1: Isolate Data
+
+---
+
+# Remove ActiveRecord relations
+
+[code comparison with relations and without]
+
+* Each change is deployable
+* Tests!
+
+---
+
+# Pretend it's in a different database
+
+[database.yml]
+[establish_connection in model]
+
+* Uses the same database as everything else
+* Helpful to deploy this at this point
+* Watch out for database connection count
+
+---
+
+# Switch to using a different database
+
+* Create a read-only database replica
+* Switch site to maintenance mode
+* Push new database.yml
+* Promote replica to be a master
+* Restart unicorns
+* Bring up site
+* Sometime later -> remove unused tables
+
+---
+
+# Step 2: Isolate the interface
+
+---
+
+# How many ways are you accessing the table?
+
+* What is your long term growth?
+* What are your long term goals?
+
+---
+
+# What does success mean at the database layer?
+
+* Is one database enough?
+* Horizontal sharding?
+
+---
+
+# How would you shard your data if you could shard your data?
+
+* Wanelo == Saves
+* Saves are viewed by:
+  * User
+  * Product
+
+---
+
+# Refactor to create an API
+
+[controller calling where on model]
+[change to class method on model]
+
+---
+
+# Refactor to reduce the API
+
+* Remove redundancy
+* Add tests
+  * You will break things very soon!
+
+---
+
+# Every step can be deployed
+
+---
+
+# Step 3: Extract database adapter into a client library
+
+---
+
+# Finders move into a module
+
+*
