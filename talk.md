@@ -10,14 +10,6 @@
 
 ---
 
-* Isolate data
-* Isolate interface
-* Extract database adapter into client library
-* Launch service layer
-* Switch client to use service adapter
-
----
-
 # Why should you listen to me?
 
 [twitter avatar]
@@ -27,9 +19,9 @@
 * Recent focus in operations
 * Such acronyms, so buzzword
   * TDD, Agile, DevOps, SOA, Cloud, IaaS
-* Work at Wanelo
 * Broken a surprising amount of things in a short amount of time
 * My apartment smells of rich mohagany
+* Work at Wanelo
 
 ---
 
@@ -144,7 +136,7 @@
 
 * Site is composed of multiple applications
 * Everything else is arguable
-* Sometimes helpful to distringuish
+* Sometimes helpful to distinguish
   * internal vs external
   * user interface vs data service
 
@@ -461,4 +453,202 @@
 
 # Finders move into a module
 
-*
+* Finders call an adapter
+* Adapter wraps database calls
+
+---
+
+# Why an adapter?
+
+* Adapter is your feature flag
+* Deployable as an in-place refactor
+* Can be replaced later with different adapters
+
+---
+
+# The adapter returns a relation
+
+* Because THREADS
+* State changes should always return a new object
+
+* Methods like #all, #first, etc are called on relation
+* Relation delegates methods to adapter
+
+---
+
+# What actually executes the query?
+
+* ActiveRecord model
+* Insert your favorite DB adapter here
+
+---
+
+# Critical to deploy at this step
+
+* 100% guaranteed to make mistakes
+* Highly likely that you missed something
+* Don't spend two weeks designing the API when you're not
+  completely sure the client works
+
+---
+
+# Step 4: Launch service layer
+
+---
+
+# Insert your framework of choice
+
+* HTTP? JSON? MessagePack?
+* What is the easiest to develop?
+  * Maps to an adapter in the client
+  * Can be replaced later when it becomes a problem
+
+* Sinatra + Oj
+
+---
+
+# Interlude...
+
+* Why should you have deployed by now?
+
+---
+
+# You have introduced bugs by now
+
+---
+
+# The server is extremely easy
+
+---
+
+# The client is much harder
+
+--
+
+# So....
+
+---
+
+# Your bugs are in the client
+
+---
+
+# Your server code will be dictated by the client
+
+* By the time you launch your service, whiteboard diagram
+  will have changed
+* Understanding of needs understood before, or after code
+  is written?
+
+---
+
+# So... back to the server
+
+[simple sinatra server]
+
+---
+
+# Step 5: Use the service layer
+
+---
+
+# Adapter is your feature flag
+
+* Switching between database and service
+* Switching between DB and HTTP adapters
+
+---
+
+[graph showing how http adapter, relation, save class, http source class relate]
+
+---
+
+# Retrospective
+
+* Isolate data
+* Isolate interface
+* Extract database adapter into client library
+* Launch service layer
+* Switch client to use service adapter
+
+---
+
+# Tests?
+
+---
+
+# Integration vs Unit
+
+* Spin up server
+  * We're already used to this with Solr, Redis, etc
+* "Fake" adapter
+  * Turn service into in-memory store (Array)
+  * Runs in main application
+* **Need** unit and integration tests around everything
+  * Can delete redundant tests later
+
+---
+
+# Development
+
+* Need to actually run service
+  * Interaction between applications is complicated
+* Foreman + Subcontractor
+  * Each app needs its own bundle environment
+  * Don't mix dependency/version changes
+
+---
+
+# But what about a new app?
+
+* Completely unrelated code can be a different application
+
+---
+
+# How do we iterate on something that doesn't exist yet?
+
+---
+
+# Deploy as early as possible
+
+* Chef/Puppet/Salt/CFEngine/Capistrano
+* Focus on
+  * Deploying changes quickly
+  * Understanding/isolating differences
+
+---
+
+# Feature flags are more than on/off
+
+* Off
+* Asynchronously on
+* On
+
+---
+
+# Deep integration instead of wide
+
+* Code path from beginning to completion
+* Errors will bubble up
+* Complexity will come
+  * Best laid plans will be waylaid by real production needs
+
+---
+
+# Project needs change with collected data
+
+* Start collecting data as early as possible
+* Data is generated through production load
+
+---
+
+# Company's needs change rapidly
+
+* 3 days of switching away from project == 3 more days of data
+
+---
+
+# Thanks!
+
+* @ecdysone
+* @sax
